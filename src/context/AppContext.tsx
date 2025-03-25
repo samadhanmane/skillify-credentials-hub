@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { Certificate, Skill, UserProfile } from "@/lib/types";
 import { mockCertificates, mockSkills, mockUserProfile } from "@/lib/mockData";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 type AppContextProps = {
   skills: Skill[];
