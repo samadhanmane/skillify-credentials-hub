@@ -1,73 +1,73 @@
 
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { MoreHorizontal } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
-
-export type SkillProps = {
-  id: string;
-  name: string;
-  level: number;
-  category: string;
-};
+import React from "react";
+import { Skill } from "@/lib/types";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 interface SkillCardProps {
-  skill: SkillProps;
-  readOnly?: boolean;
+  skill: Skill;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export const SkillCard: React.FC<SkillCardProps> = ({ skill, readOnly = false }) => {
-  const { deleteSkill } = useAppContext();
+const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete }) => {
+  const { name, level, category } = skill;
 
-  const getLevelText = (level: number) => {
-    if (level < 30) return 'Beginner';
-    if (level < 60) return 'Intermediate';
-    if (level < 85) return 'Advanced';
-    return 'Expert';
+  const getLevelLabel = (level: number) => {
+    if (level < 30) return "Beginner";
+    if (level < 60) return "Intermediate";
+    if (level < 85) return "Advanced";
+    return "Expert";
   };
 
-  const getProgressColor = (level: number) => {
-    if (level < 30) return 'bg-blue-500';
-    if (level < 60) return 'bg-green-500';
-    if (level < 85) return 'bg-yellow-500';
-    return 'bg-red-500';
+  const getLevelColor = (level: number) => {
+    if (level < 30) return "bg-blue-500";
+    if (level < 60) return "bg-indigo-500";
+    if (level < 85) return "bg-violet-500";
+    return "bg-purple-500";
   };
 
   return (
-    <Card className="h-full">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            <h3 className="font-medium">{skill.name}</h3>
-          </div>
-          {!readOnly && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => deleteSkill(skill.id)}>Delete</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+    <Card className="overflow-hidden hover-lift h-full">
+      <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+        <div>
+          <Badge variant="outline" className="mb-1 bg-accent">
+            {category}
+          </Badge>
+          <h3 className="font-medium">{name}</h3>
         </div>
-        
-        <Badge variant="outline" className="mb-3">{skill.category}</Badge>
-        
+        <Badge variant="secondary">
+          {getLevelLabel(level)}
+        </Badge>
+      </CardHeader>
+      <CardContent className="p-4 pt-0">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Proficiency</span>
-            <span>{getLevelText(skill.level)}</span>
+            <span className="text-muted-foreground">Proficiency</span>
+            <span className="font-medium">{level}%</span>
           </div>
-          <Progress value={skill.level} className={getProgressColor(skill.level)} />
+          <Progress value={level} className="h-2" />
         </div>
+        
+        {(onEdit || onDelete) && (
+          <div className="flex justify-end gap-2 mt-4">
+            {onEdit && (
+              <Button variant="ghost" size="sm" onClick={onEdit}>
+                Edit
+              </Button>
+            )}
+            {onDelete && (
+              <Button variant="destructive" size="sm" onClick={onDelete}>
+                Delete
+              </Button>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 };
+
+export default SkillCard;

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const LoginPage = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpEmail, setOtpEmail] = useState('');
 
+  // Form for email/password login
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -41,6 +43,7 @@ const LoginPage = () => {
     },
   });
 
+  // Form for OTP email request
   const otpEmailForm = useForm<z.infer<typeof otpEmailSchema>>({
     resolver: zodResolver(otpEmailSchema),
     defaultValues: {
@@ -48,6 +51,7 @@ const LoginPage = () => {
     },
   });
 
+  // Form for OTP verification
   const otpVerifyForm = useForm<z.infer<typeof otpVerifySchema>>({
     resolver: zodResolver(otpVerifySchema),
     defaultValues: {
@@ -59,7 +63,7 @@ const LoginPage = () => {
     try {
       setIsLoading(true);
       await login(values.email, values.password);
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
@@ -84,7 +88,7 @@ const LoginPage = () => {
     try {
       setIsLoading(true);
       await verifyOTP(otpEmail, values.otp);
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('OTP verification failed:', error);
     } finally {
@@ -96,7 +100,7 @@ const LoginPage = () => {
     try {
       setIsLoading(true);
       await loginWithGoogle();
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Google login failed:', error);
     } finally {

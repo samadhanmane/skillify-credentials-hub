@@ -1,97 +1,100 @@
 
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, CalendarIcon, ExternalLinkIcon } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
-import { format } from 'date-fns';
-
-interface Certificate {
-  id: string;
-  title: string;
-  issuer: string;
-  date: string;
-  expiryDate?: string;
-  credentialId?: string;
-  credentialUrl?: string;
-  skills: string[];
-  category: string;
-  imageUrl: string;
-}
+import React from "react";
+import { Certificate } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Calendar, Link2, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface CertificateCardProps {
   certificate: Certificate;
-  readOnly?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export const CertificateCard: React.FC<CertificateCardProps> = ({ certificate, readOnly = false }) => {
-  const { deleteCertificate } = useAppContext();
+const CertificateCard: React.FC<CertificateCardProps> = ({ certificate, onEdit, onDelete }) => {
+  const { title, issuer, date, expiryDate, credentialUrl, skills, category, imageUrl } = certificate;
 
-  // Format date from ISO string to readable format
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'MMM yyyy');
-    } catch (e) {
-      return dateString;
-    }
-  };
+  const formattedDate = new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  const formattedExpiryDate = expiryDate
+    ? new Date(expiryDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : null;
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-2 flex flex-row items-start justify-between space-y-0">
-        <CardTitle className="text-lg font-medium">{certificate.title}</CardTitle>
-        {!readOnly && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => deleteCertificate(certificate.id)}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </CardHeader>
-      <CardContent className="pb-2 flex-grow">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-muted-foreground">{certificate.issuer}</span>
-          <Badge variant="outline">{certificate.category}</Badge>
+    <Card className="overflow-hidden hover-lift transition-all duration-300 h-full">
+      <CardHeader className="p-0">
+        <div className="bg-primary/5 p-6 flex items-start justify-between">
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-12 w-12 border-2 border-primary/20">
+              <AvatarImage src={imageUrl} alt={issuer} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {issuer.substring(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <Badge variant="secondary" className="mb-2">{category}</Badge>
+              <h3 className="font-semibold text-base">{title}</h3>
+              <p className="text-sm text-muted-foreground">Issued by {issuer}</p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center text-sm text-muted-foreground mb-3">
-          <CalendarIcon className="h-3 w-3 mr-1" />
-          <span>
-            {formatDate(certificate.date)}
-            {certificate.expiryDate && ` - ${formatDate(certificate.expiryDate)}`}
-          </span>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="flex items-center text-sm text-muted-foreground mb-4">
+          <Calendar className="h-4 w-4 mr-2" />
+          <span>Issued: {formattedDate}</span>
+          {formattedExpiryDate && (
+            <>
+              <span className="mx-1">•</span>
+              <span>Expires: {formattedExpiryDate}</span>
+            </>
+          )}
         </div>
         
-        <div className="flex flex-wrap gap-1 mt-2">
-          {certificate.skills.map((skill, index) => (
-            <Badge key={index} variant="secondary" className="text-xs">
+        <div className="flex flex-wrap gap-1.5 mt-3">
+          {skills.map((skill, index) => (
+            <Badge key={index} variant="outline" className="bg-accent">
               {skill}
             </Badge>
           ))}
         </div>
       </CardContent>
-      
-      {certificate.credentialUrl && (
-        <CardFooter className="pt-2">
-          <a 
-            href={certificate.credentialUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center text-xs text-blue-600 hover:underline"
-          >
-            <ExternalLinkIcon className="h-3 w-3 mr-1" />
-            View Credential
-          </a>
-        </CardFooter>
-      )}
+      <CardFooter className="p-6 pt-0 flex justify-between">
+        {credentialUrl && (
+          <Button variant="outline" size="sm" className="gap-1" asChild>
+            <a href={credentialUrl} target="_blank" rel="noopener noreferrer">
+              <Link2 className="h-3.5 w-3.5" />
+              View credential
+            </a>
+          </Button>
+        )}
+        
+        <div className="flex gap-2">
+          {onEdit && (
+            <Button variant="ghost" size="sm" onClick={onEdit}>
+              Edit
+            </Button>
+          )}
+          {onDelete && (
+            <Button variant="destructive" size="sm" onClick={onDelete}>
+              Delete
+            </Button>
+          )}
+        </div>
+      </CardFooter>
     </Card>
   );
 };
+
+export default CertificateCard;
