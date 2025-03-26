@@ -1,8 +1,9 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MenuIcon, User, Home, Award, PieChart, Share2, Settings } from "lucide-react";
+import { MenuIcon, User, Home, Award, PieChart, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
