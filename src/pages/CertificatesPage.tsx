@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
-import CertificateCard from "@/components/CertificateCard";
+import { CertificateCard } from "@/components/CertificateCard";
 import AddCertificateForm from "@/components/AddCertificateForm";
 import { Input } from "@/components/ui/input";
 import {
