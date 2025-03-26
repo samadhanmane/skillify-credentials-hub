@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { CheckIcon, CopyIcon, ShareIcon } from "lucide-react";
 
 const ProfilePage = () => {
   const { userProfile, updateUserProfile } = useAppContext();
@@ -23,6 +24,10 @@ const ProfilePage = () => {
     twitterUrl: userProfile.socialLinks?.twitter || "",
     websiteUrl: userProfile.socialLinks?.website || "",
   });
+  const [copied, setCopied] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+
+  const shareableLink = `${window.location.origin}/profile/${userProfile.id}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,13 +57,54 @@ const ProfilePage = () => {
     toast.success("Profile updated successfully");
   };
 
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareableLink);
+      setCopied(true);
+      toast.success("Link copied to clipboard");
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      toast.error("Failed to copy link");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Your Profile</h1>
-        <Button className="hidden md:block" onClick={() => toast.info("Public profile sharing coming soon!")}>
-          Share Public Profile
-        </Button>
+        <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="hidden md:flex items-center gap-2">
+              <ShareIcon className="h-4 w-4" />
+              Share Public Profile
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Share Your Profile</DialogTitle>
+              <DialogDescription>
+                Anyone with this link can view your public profile, including your skills and certifications.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex items-center space-x-2 mt-4">
+              <Input 
+                readOnly 
+                value={shareableLink} 
+                className="flex-1"
+              />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={copyToClipboard}
+              >
+                {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+              </Button>
+            </div>
+            <DialogFooter className="mt-4">
+              <Button onClick={() => setShareDialogOpen(false)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

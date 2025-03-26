@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
-import SkillCard from "@/components/SkillCard";
+import { SkillCard } from "@/components/SkillCard";
 import AddSkillForm from "@/components/AddSkillForm";
 import { Input } from "@/components/ui/input";
 import {
