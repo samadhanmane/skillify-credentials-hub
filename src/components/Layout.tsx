@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -16,7 +15,6 @@ const navItems = [
   { name: "Certificates", path: "/certificates", icon: Award },
   { name: "Skills", path: "/skills", icon: PieChart },
   { name: "Profile", path: "/profile", icon: User },
-  { name: "Share", path: "/share", icon: Share2 },
   { name: "Settings", path: "/settings", icon: Settings },
 ];
 
