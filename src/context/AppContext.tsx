@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { toast } from 'sonner';
 import AuthProvider from '@/hooks/useAuth';
+import { UserProfile } from '@/lib/types';
 
 // Type definitions
 type Theme = 'light' | 'dark' | 'system';
@@ -37,6 +38,8 @@ interface AppContextType {
   addCertificate: (certificate: Omit<Certificate, 'id'>) => void;
   updateCertificate: (certificate: Certificate) => void;
   deleteCertificate: (id: string) => void;
+  userProfile: UserProfile;
+  updateUserProfile: (profile: Partial<UserProfile>) => void;
 }
 
 // Create context
@@ -83,6 +86,23 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       imageUrl: '/placeholder.svg',
     },
   ]);
+
+  // User profile state
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    id: '1',
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    title: 'Full Stack Developer',
+    bio: 'Passionate developer with experience in React, Node.js, and cloud technologies.',
+    location: 'San Francisco, CA',
+    avatarUrl: '/placeholder.svg',
+    socialLinks: {
+      linkedin: 'https://linkedin.com/in/johndoe',
+      github: 'https://github.com/johndoe',
+      twitter: 'https://twitter.com/johndoe',
+      website: 'https://johndoe.com',
+    },
+  });
 
   // Update theme handler
   const handleThemeChange = (newTheme: Theme) => {
@@ -151,6 +171,15 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // User profile update function
+  const updateUserProfile = (profile: Partial<UserProfile>) => {
+    setUserProfile(prev => ({
+      ...prev,
+      ...profile,
+    }));
+    toast.success('Profile updated successfully');
+  };
+
   // Context value
   const value = {
     theme,
@@ -163,6 +192,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     addCertificate,
     updateCertificate,
     deleteCertificate,
+    userProfile,
+    updateUserProfile,
   };
 
   return (
