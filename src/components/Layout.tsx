@@ -10,9 +10,10 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
-  { name: "Dashboard", path: "/", icon: Home },
+  { name: "Dashboard", path: "/dashboard", icon: Home },
   { name: "Certificates", path: "/certificates", icon: Award },
   { name: "Skills", path: "/skills", icon: PieChart },
   { name: "Profile", path: "/profile", icon: User },
@@ -26,13 +27,14 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { logout } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border/40 backdrop-blur-sm bg-background/80 fixed w-full z-10">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/dashboard" className="flex items-center gap-2">
               <Award className="h-6 w-6 text-primary" />
               <span className="text-xl font-semibold tracking-tight">SkillTrack</span>
             </Link>
@@ -63,27 +65,44 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       {item.name}
                     </Link>
                   ))}
+                  <Button
+                    variant="ghost"
+                    className="flex items-center justify-start gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                    onClick={() => logout()}
+                  >
+                    Logout
+                  </Button>
                 </nav>
               </SheetContent>
             </Sheet>
           ) : (
-            <nav className="flex items-center gap-6">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                    location.pathname === item.path
-                      ? "text-primary"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
+            <div className="flex items-center gap-6">
+              <nav className="flex items-center gap-6">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
+                      location.pathname === item.path
+                        ? "text-primary"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => logout()}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                Logout
+              </Button>
+            </div>
           )}
         </div>
       </header>
