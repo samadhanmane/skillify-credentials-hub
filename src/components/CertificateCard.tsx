@@ -1,27 +1,22 @@
 
 import React from 'react';
+import { Certificate } from '@/lib/types';
 
 interface CertificateCardProps {
-  name: string;
-  issuer: string;
-  issueDate: string;
-  expiryDate?: string;
-  credentialURL?: string;
+  certificate: Certificate;
   onEdit?: () => void;
   onDelete?: () => void;
   onView?: () => void;
 }
 
 const CertificateCard: React.FC<CertificateCardProps> = ({
-  name,
-  issuer,
-  issueDate,
-  expiryDate,
-  credentialURL,
+  certificate,
   onEdit,
   onDelete,
   onView
 }) => {
+  const { title, issuer, date, expiryDate, credentialUrl } = certificate;
+  
   // Function to format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -40,7 +35,7 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
       <div className="p-4">
         <div className="flex justify-between items-start mb-3">
           <div>
-            <h3 className="font-semibold">{name}</h3>
+            <h3 className="font-semibold">{title}</h3>
             <p className="text-sm text-muted">Issued by {issuer}</p>
           </div>
           {isExpired ? (
@@ -65,7 +60,7 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
               <line x1="8" y1="2" x2="8" y2="6"></line>
               <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
-            <span>Issued: {formatDate(issueDate)}</span>
+            <span>Issued: {formatDate(date)}</span>
           </div>
           
           {expiryDate && (
@@ -82,9 +77,9 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
         </div>
         
         <div className="flex flex-wrap gap-2">
-          {credentialURL && (
+          {credentialUrl && (
             <a 
-              href={credentialURL} 
+              href={credentialUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn btn-outline text-sm py-1 px-3"
