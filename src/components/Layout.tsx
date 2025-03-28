@@ -1,129 +1,72 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { MenuIcon, User, Home, Award, PieChart, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "../App";
 
-const navItems = [
-  { name: "Dashboard", path: "/dashboard", icon: Home },
-  { name: "Certificates", path: "/certificates", icon: Award },
-  { name: "Skills", path: "/skills", icon: PieChart },
-  { name: "Profile", path: "/profile", icon: User },
-  { name: "Settings", path: "/settings", icon: Settings },
-];
-
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const isMobile = useIsMobile();
   const { logout } = useAuth();
+  
+  const navItems = [
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "Skills", path: "/skills" },
+    { name: "Certificates", path: "/certificates" },
+    { name: "Profile", path: "/profile" },
+    { name: "Settings", path: "/settings" },
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <header className="border-b border-border/40 backdrop-blur-sm bg-background/80 fixed w-full z-10">
-        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-2">
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <Award className="h-6 w-6 text-primary" />
-              <span className="text-xl font-semibold tracking-tight">SkillTrack</span>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-white border-b shadow-sm fixed w-full z-10">
+        <div className="container mx-auto flex justify-between items-center h-16 px-4">
+          <div className="flex items-center">
+            <Link to="/dashboard" className="text-xl font-bold text-indigo-600">
+              SkillTrack
             </Link>
           </div>
 
-          {isMobile ? (
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MenuIcon className="h-5 w-5" />
-                  <span className="sr-only">Toggle navigation menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-64">
-                <nav className="mt-8 flex flex-col gap-4">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        location.pathname === item.path
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-muted"
-                      )}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {item.name}
-                    </Link>
-                  ))}
-                  <Button
-                    variant="ghost"
-                    className="flex items-center justify-start gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
-                    onClick={() => logout()}
-                  >
-                    Logout
-                  </Button>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          ) : (
-            <div className="flex items-center gap-6">
-              <nav className="flex items-center gap-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={cn(
-                      "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                      location.pathname === item.path
-                        ? "text-primary"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => logout()}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+          <nav className="hidden md:flex items-center space-x-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`text-sm font-medium transition-colors hover:text-indigo-600 ${
+                  location.pathname === item.path
+                    ? "text-indigo-600"
+                    : "text-gray-600"
+                }`}
               >
-                Logout
-              </Button>
-            </div>
-          )}
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
+          <button 
+            onClick={logout}
+            className="text-sm font-medium text-gray-600 hover:text-indigo-600"
+          >
+            Logout
+          </button>
         </div>
       </header>
-      <main className="flex-1 pt-16 container max-w-7xl mx-auto px-4 md:px-6 py-8">
-        <div className="animate-fade-in">
-          {children}
-        </div>
+      
+      <main className="flex-1 pt-16 container mx-auto px-4 py-8">
+        {children}
       </main>
-      <footer className="border-t border-border/40 py-6 bg-background/80 backdrop-blur-sm">
-        <div className="container flex flex-col md:flex-row items-center justify-between gap-4 px-4 md:px-6">
-          <p className="text-sm text-muted-foreground">
+      
+      <footer className="bg-white border-t py-6">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
+          <p className="text-sm text-gray-500">
             © 2023 SkillTrack. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <div className="flex items-center space-x-4 mt-4 md:mt-0">
+            <Link to="#" className="text-sm text-gray-500 hover:text-indigo-600">
               Terms
             </Link>
-            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="#" className="text-sm text-gray-500 hover:text-indigo-600">
               Privacy
             </Link>
-            <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="#" className="text-sm text-gray-500 hover:text-indigo-600">
               Contact
             </Link>
           </div>
