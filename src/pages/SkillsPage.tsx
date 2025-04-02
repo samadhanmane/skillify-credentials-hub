@@ -1,173 +1,116 @@
 
-import React, { useState } from 'react';
-import { useAppContext } from '../App';
+import React, { useMemo, useState } from "react";
+import { useAppContext } from "@/context/AppContext";
+import { SkillCard } from "@/components/SkillCard";
+import AddSkillForm from "@/components/AddSkillForm";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, SortAsc } from "lucide-react";
 
-const SkillsPage = () => {
-  const { skills, addSkill, deleteSkill } = useAppContext();
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newSkill, setNewSkill] = useState({ name: '', level: 50, category: '' });
-  const [search, setSearch] = useState('');
+const SkillsPage: React.FC = () => {
+  const { skills } = useAppContext();
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("name");
+  const [filterCategory, setFilterCategory] = useState("all");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addSkill(newSkill);
-    setNewSkill({ name: '', level: 50, category: '' });
-    setShowAddForm(false);
-  };
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set(skills.map((skill) => skill.category));
+    return ["all", ...Array.from(uniqueCategories)];
+  }, [skills]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewSkill({ ...newSkill, [name]: name === 'level' ? parseInt(value) : value });
-  };
+  const filteredAndSortedSkills = useMemo(() => {
+    let filtered = skills.filter((skill) =>
+      skill.name.toLowerCase().includes(search.toLowerCase())
+    );
 
-  const filteredSkills = skills.filter(skill => 
-    skill.name.toLowerCase().includes(search.toLowerCase()) || 
-    skill.category.toLowerCase().includes(search.toLowerCase())
-  );
+    if (filterCategory !== "all") {
+      filtered = filtered.filter((skill) => skill.category === filterCategory);
+    }
 
-  const getLevelText = (level: number) => {
-    if (level < 30) return 'Beginner';
-    if (level < 60) return 'Intermediate';
-    if (level < 85) return 'Advanced';
-    return 'Expert';
-  };
+    return filtered.sort((a, b) => {
+      if (sortBy === "name") {
+        return a.name.localeCompare(b.name);
+      } else if (sortBy === "level") {
+        return b.level - a.level;
+      } else {
+        return a.category.localeCompare(b.category);
+      }
+    });
+  }, [skills, search, sortBy, filterCategory]);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Skills</h1>
-          <p className="text-gray-600">
-            Manage and track your professional skills
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Skills</h1>
+          <p className="text-muted-foreground">
+            Manage and track your professional skills.
           </p>
         </div>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-        >
-          {showAddForm ? 'Cancel' : 'Add Skill'}
-        </button>
+        <AddSkillForm />
       </div>
 
-      {showAddForm && (
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <h2 className="text-xl font-semibold mb-4">Add New Skill</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Skill Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  value={newSkill.name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Category
-                </label>
-                <input
-                  id="category"
-                  name="category"
-                  value={newSkill.category}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <label htmlFor="level" className="block text-sm font-medium text-gray-700">
-                  Proficiency Level
-                </label>
-                <span className="text-sm text-gray-500">
-                  {newSkill.level}% - {getLevelText(newSkill.level)}
-                </span>
-              </div>
-              <input
-                id="level"
-                name="level"
-                type="range"
-                min="1"
-                max="100"
-                value={newSkill.level}
-                onChange={handleChange}
-                className="w-full"
-              />
-            </div>
-            
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-              >
-                Save Skill
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-64">
-          <input
-            type="text"
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
             placeholder="Search skills..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="pl-9"
           />
+        </div>
+        
+        <div className="flex gap-2 sm:gap-4">
+          <Select onValueChange={setFilterCategory} value={filterCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category === "all" ? "All Categories" : category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={setSortBy} value={sortBy}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue>
+                <div className="flex items-center gap-2">
+                  <SortAsc className="h-4 w-4" />
+                  <span>Sort by</span>
+                </div>
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="level">Level</SelectItem>
+              <SelectItem value="category">Category</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {filteredSkills.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSkills.map((skill) => (
-            <div key={skill.id} className="bg-white p-4 rounded-lg shadow-sm border">
-              <div className="flex justify-between mb-2">
-                <h3 className="font-medium">{skill.name}</h3>
-                <button
-                  onClick={() => deleteSkill(skill.id)}
-                  className="text-red-600 text-sm"
-                >
-                  Delete
-                </button>
-              </div>
-              
-              <div className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded mb-3">
-                {skill.category}
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Proficiency</span>
-                  <span>{getLevelText(skill.level)}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div
-                    className={`h-2.5 rounded-full ${
-                      skill.level < 30 ? 'bg-blue-500' :
-                      skill.level < 60 ? 'bg-green-500' :
-                      skill.level < 85 ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
-                    style={{ width: `${skill.level}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          ))}
+      {filteredAndSortedSkills.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No skills found.</p>
         </div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No skills found.</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredAndSortedSkills.map((skill) => (
+            <SkillCard
+              key={skill.id}
+              skill={skill}
+            />
+          ))}
         </div>
       )}
     </div>

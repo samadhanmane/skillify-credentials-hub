@@ -1,181 +1,162 @@
 
-import React, { useState } from 'react';
+import React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SettingsPage = () => {
-  const [activeTab, setActiveTab] = useState('account');
-
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Settings</h1>
 
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
-          <button
-            onClick={() => setActiveTab('account')}
-            className={`py-4 px-1 text-sm font-medium ${
-              activeTab === 'account'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Account
-          </button>
-          <button
-            onClick={() => setActiveTab('notifications')}
-            className={`py-4 px-1 text-sm font-medium ${
-              activeTab === 'notifications'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Notifications
-          </button>
-          <button
-            onClick={() => setActiveTab('privacy')}
-            className={`py-4 px-1 text-sm font-medium ${
-              activeTab === 'privacy'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Privacy
-          </button>
-        </nav>
-      </div>
-      
-      {activeTab === 'account' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h2 className="text-xl font-semibold mb-4">Account Settings</h2>
-            <div className="space-y-4">
+      <Tabs defaultValue="account" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="privacy">Privacy</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="account">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Settings</CardTitle>
+                <CardDescription>
+                  Manage your account preferences
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="password-reset">Change Password</Label>
+                    <p className="text-sm text-muted-foreground">Update your password</p>
+                  </div>
+                  <Button variant="outline" id="password-reset" onClick={() => toast.info("Password reset feature coming soon")}>
+                    Reset
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="2fa">Two-Factor Authentication</Label>
+                    <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
+                  </div>
+                  <Button variant="outline" id="2fa" onClick={() => toast.info("2FA coming soon")}>
+                    Setup
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Danger Zone</CardTitle>
+                <CardDescription>
+                  Irreversible account actions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="export">Export Data</Label>
+                    <p className="text-sm text-muted-foreground">Download all your data</p>
+                  </div>
+                  <Button variant="outline" id="export" onClick={() => toast.info("Data export coming soon")}>
+                    Export
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="delete-account" className="text-destructive">Delete Account</Label>
+                    <p className="text-sm text-muted-foreground">Permanently remove your account</p>
+                  </div>
+                  <Button variant="destructive" id="delete-account" onClick={() => 
+                    toast.error("This feature is currently disabled for demo purposes")
+                  }>
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle>Notification Preferences</CardTitle>
+              <CardDescription>
+                Control how you receive notifications
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium">Change Password</h3>
-                  <p className="text-sm text-gray-500">Update your password</p>
+                  <Label htmlFor="email-notifs">Email Notifications</Label>
+                  <p className="text-sm text-muted-foreground">Receive notifications via email</p>
                 </div>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm">
-                  Reset
-                </button>
+                <Switch id="email-notifs" defaultChecked />
               </div>
               
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium">Two-Factor Authentication</h3>
-                  <p className="text-sm text-gray-500">Add an extra layer of security</p>
+                  <Label htmlFor="cert-expiry">Certificate Expiry Alerts</Label>
+                  <p className="text-sm text-muted-foreground">Get alerts when certificates are about to expire</p>
                 </div>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm">
-                  Setup
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h2 className="text-xl font-semibold mb-4 text-red-600">Danger Zone</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Export Data</h3>
-                  <p className="text-sm text-gray-500">Download all your data</p>
-                </div>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm">
-                  Export
-                </button>
+                <Switch id="cert-expiry" defaultChecked />
               </div>
               
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium text-red-600">Delete Account</h3>
-                  <p className="text-sm text-gray-500">Permanently remove your account</p>
+                  <Label htmlFor="skill-updates">Skill Update Reminders</Label>
+                  <p className="text-sm text-muted-foreground">Reminders to update your skills periodically</p>
                 </div>
-                <button className="px-3 py-1 bg-red-600 text-white rounded text-sm">
-                  Delete
-                </button>
+                <Switch id="skill-updates" defaultChecked />
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {activeTab === 'notifications' && (
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <h2 className="text-xl font-semibold mb-4">Notification Preferences</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Email Notifications</h3>
-                <p className="text-sm text-gray-500">Receive notifications via email</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="privacy">
+          <Card>
+            <CardHeader>
+              <CardTitle>Privacy Settings</CardTitle>
+              <CardDescription>
+                Control who can see your profile and information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="public-profile">Public Profile</Label>
+                  <p className="text-sm text-muted-foreground">Make your profile visible to everyone</p>
+                </div>
+                <Switch id="public-profile" defaultChecked />
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Certificate Expiry Alerts</h3>
-                <p className="text-sm text-gray-500">Get alerts when certificates are about to expire</p>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="show-skills">Show Skills Publicly</Label>
+                  <p className="text-sm text-muted-foreground">Allow others to see your skills</p>
+                </div>
+                <Switch id="show-skills" defaultChecked />
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Skill Update Reminders</h3>
-                <p className="text-sm text-gray-500">Reminders to update your skills periodically</p>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="show-certs">Show Certificates Publicly</Label>
+                  <p className="text-sm text-muted-foreground">Allow others to see your certificates</p>
+                </div>
+                <Switch id="show-certs" defaultChecked />
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {activeTab === 'privacy' && (
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <h2 className="text-xl font-semibold mb-4">Privacy Settings</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Public Profile</h3>
-                <p className="text-sm text-gray-500">Make your profile visible to everyone</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Show Skills Publicly</h3>
-                <p className="text-sm text-gray-500">Allow others to see your skills</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Show Certificates Publicly</h3>
-                <p className="text-sm text-gray-500">Allow others to see your certificates</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-          </div>
-        </div>
-      )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
