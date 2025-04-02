@@ -7,20 +7,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
-
-export type SkillProps = {
-  id: string;
-  name: string;
-  level: number;
-  category: string;
-};
+import { Skill } from '@/lib/types';
 
 interface SkillCardProps {
-  skill: SkillProps;
+  skill: Skill;
   readOnly?: boolean;
 }
 
-export const SkillCard: React.FC<SkillCardProps> = ({ skill, readOnly = false }) => {
+const SkillCard: React.FC<SkillCardProps> = ({ skill, readOnly = false }) => {
   const { deleteSkill } = useAppContext();
 
   const getLevelText = (level: number) => {
@@ -71,3 +65,5 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skill, readOnly = false })
     </Card>
   );
 };
+
+export default SkillCard;

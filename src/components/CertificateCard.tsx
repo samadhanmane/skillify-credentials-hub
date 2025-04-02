@@ -7,26 +7,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal, CalendarIcon, ExternalLinkIcon } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { format } from 'date-fns';
-
-interface Certificate {
-  id: string;
-  title: string;
-  issuer: string;
-  date: string;
-  expiryDate?: string;
-  credentialId?: string;
-  credentialUrl?: string;
-  skills: string[];
-  category: string;
-  imageUrl: string;
-}
+import { Certificate } from '@/lib/types';
 
 interface CertificateCardProps {
   certificate: Certificate;
   readOnly?: boolean;
 }
 
-export const CertificateCard: React.FC<CertificateCardProps> = ({ certificate, readOnly = false }) => {
+const CertificateCard: React.FC<CertificateCardProps> = ({ certificate, readOnly = false }) => {
   const { deleteCertificate } = useAppContext();
 
   // Format date from ISO string to readable format
@@ -95,3 +83,5 @@ export const CertificateCard: React.FC<CertificateCardProps> = ({ certificate, r
     </Card>
   );
 };
+
+export default CertificateCard;
