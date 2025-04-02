@@ -5,8 +5,8 @@ import { useAppContext } from "@/context/AppContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { SkillCard } from "@/components/SkillCard";
-import { CertificateCard } from "@/components/CertificateCard";
+import SkillCard from "@/components/SkillCard";
+import CertificateCard from "@/components/CertificateCard";
 import { CalendarIcon, MapPinIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 

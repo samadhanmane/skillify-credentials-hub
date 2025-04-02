@@ -3,7 +3,7 @@ import React from "react";
 import { useAppContext } from "@/context/AppContext";
 import SkillRadarChart from "@/components/SkillRadarChart";
 import SkillCategoryChart from "@/components/SkillCategoryChart";
-import { CertificateCard } from "@/components/CertificateCard";
+import CertificateCard from "@/components/CertificateCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, BarChart, GraduationCap } from "lucide-react";
 
